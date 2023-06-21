@@ -34,6 +34,9 @@ def upgrade() -> None:
         sa.Column('deleted_at', sa.DateTime, nullable=True)
     )
 
+    op.create_foreign_key(None, 'menus', 'menu_categories', ['menu_category_id'], ['id'])
+    op.create_foreign_key(None, 'menus', 'restaurants', ['restaurant_id'], ['id'])
+
 
 def downgrade() -> None:
-    pass
+    op.drop_table('menus')

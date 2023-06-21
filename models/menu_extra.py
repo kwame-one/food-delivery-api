@@ -4,20 +4,15 @@ from sqlalchemy.orm import relationship
 from .base import Base
 
 
-class Menu(Base):
-    __tablename__ = "menus"
+class MenuExtra(Base):
+    __tablename__ = "menu_extras"
 
     id = Column(String(191), primary_key=True, autoincrement=False, unique=True)
-    menu_category_id = Column(String(191), ForeignKey('menu_categories.id'))
-    restaurant_id = Column(String(191), ForeignKey('restaurants.id'))
+    menu_id = Column(String(191), ForeignKey('menus.id'))
     name = Column(String(191), nullable=False)
-    description = Column(Text(), nullable=False)
     price = Column(Double(), nullable=False)
-    image = Column(String(191), nullable=False)
 
-    menu_category = relationship('MenuCategory', back_populates='menus')
-    restaurant = relationship('Restaurant', back_populates='menus')
-    menu_extras = relationship('MenuExtra', back_populates='menu')
+    menu = relationship('Menu', back_populates='menu_extras')
 
     created_at = Column(DateTime, server_default=func.now(), nullable=True)
     updated_at = Column(DateTime, server_onupdate=func.now(), nullable=True)
