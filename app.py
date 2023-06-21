@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_http_middleware import MiddlewareManager
 
+from commands.seed_command import seed_cli
 from configs.database import db_session, init_db
 from di import init_container
 
@@ -12,6 +13,7 @@ init_db()
 
 
 app.wsgi_app = MiddlewareManager(app)
+app.cli.add_command(seed_cli)
 
 init_container(app)
 
