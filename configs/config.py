@@ -1,6 +1,6 @@
 import os
 
-from configs import secret_key
+from configs import secret_key, jwt_secret
 
 SECRET_KEY = secret_key
 
@@ -9,3 +9,5 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Enable debug mode.
 DEBUG = True
+
+JWT_SECRET_KEY = jwt_secret

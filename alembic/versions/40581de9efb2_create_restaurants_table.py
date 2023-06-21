@@ -26,10 +26,13 @@ def upgrade() -> None:
         sa.Column('email', sa.String(191), nullable=False),
         sa.Column('address', sa.String(191), nullable=False),
         sa.Column('phone', sa.String(191), nullable=False),
+        sa.Column('user_id', sa.String(191), nullable=False),
         sa.Column('created_at', sa.DateTime, server_default=func.now(), nullable=True),
         sa.Column('updated_at', sa.DateTime, server_onupdate=func.now(), nullable=True),
         sa.Column('deleted_at', sa.DateTime, nullable=True)
     )
+
+    op.create_foreign_key(None, 'restaurants', 'users', ['user_id'], ['id'])
 
 
 def downgrade() -> None:

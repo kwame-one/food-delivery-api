@@ -9,3 +9,7 @@ def bad_request_handler(e: ValidationError):
 
 def resource_not_found_handler(e):
     return jsonify({'message': e.description}), 404
+
+
+def email_exists_handler(e):
+    return jsonify({'email': 'Email has already taken'}), 404

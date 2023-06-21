@@ -15,7 +15,7 @@ class Order(Base):
     order_status_id = Column(String(191), ForeignKey('order_statuses.id'))
     total = Column(Double(), nullable=False)
 
-    user_order = relationship('UserOrder')
+    user_order = relationship('UserOrder', back_populates='orders')
     user = relationship('User')
     restaurant = relationship('Restaurant')
     order_status = relationship('OrderStatus')

@@ -1,19 +1,26 @@
 from flask import Flask
 from flask_http_middleware import MiddlewareManager
+from flask_jwt_extended import JWTManager
 
 from commands.seed_command import seed_cli
 from configs.database import db_session, init_db
+from controllers import register_routes
 from di import init_container
-
+from exceptions import register_handlers
 
 app = Flask(__name__)
 app.config.from_object('configs.config')
+JWTManager(app)
 
 init_db()
 
 
 app.wsgi_app = MiddlewareManager(app)
 app.cli.add_command(seed_cli)
+
+register_handlers(app)
+
+register_routes(app)
 
 init_container(app)
 

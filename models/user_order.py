@@ -14,7 +14,7 @@ class UserOrder(Base):
     updated_at = Column(DateTime, server_onupdate=func.now(), nullable=True)
     deleted_at = Column(DateTime, nullable=True)
 
-    menus = relationship('User')
+    orders = relationship('Order', back_populates='user_order')
 
     def __repr__(self):
         return f"UserOrder(id={self.id}, user_id={self.user_id}, total={self.total}, created_at={self.created_at})"
