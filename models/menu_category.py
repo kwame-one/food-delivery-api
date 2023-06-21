@@ -13,5 +13,7 @@ class MenuCategory(Base):
     updated_at = Column(DateTime, server_onupdate=func.now(), nullable=True)
     deleted_at = Column(DateTime, nullable=True)
 
+    menus = relationship('Menu', back_populates='menu_category')
+
     def __repr__(self):
         return f"MenuCategory(id={self.id}, name={self.name}, created_at={self.created_at})"

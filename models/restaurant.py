@@ -1,4 +1,5 @@
 from sqlalchemy import String, func, Column, DateTime
+from sqlalchemy.orm import relationship
 
 from .base import Base
 
@@ -15,3 +16,5 @@ class Restaurant(Base):
     created_at = Column(DateTime, server_default=func.now(), nullable=True)
     updated_at = Column(DateTime, server_onupdate=func.now(), nullable=True)
     deleted_at = Column(DateTime, nullable=True)
+
+    menus = relationship('Menu', back_populates='restaurant')
