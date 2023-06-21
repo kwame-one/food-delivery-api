@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select, desc, update, delete
 
 from configs.database import db_session
@@ -19,6 +21,7 @@ class BaseRepository:
         return self.find(id)
 
     def store(self, data):
+        data['id'] = str(uuid.uuid4())
         resource = self.model(**data)
         db_session.add(resource)
         db_session.commit()
