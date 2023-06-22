@@ -12,4 +12,4 @@ def resource_not_found_handler(e):
 
 
 def email_exists_handler(e):
-    return jsonify({'email': 'Email has already taken'}), 404
+    return jsonify({'message': 'Email has already taken'}), 400

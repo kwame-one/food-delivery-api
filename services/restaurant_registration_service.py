@@ -14,6 +14,8 @@ from repositories.user_repository import UserRepository
 from services.base_service import BaseService
 from passlib.hash import bcrypt
 
+from utils import generate_password
+
 
 class RestaurantRegistrationService(BaseService, ABC):
     @inject
@@ -68,7 +70,7 @@ class RestaurantRegistrationService(BaseService, ABC):
         user_data = {
             'name': resource.user_name,
             'email': resource.user_email,
-            'password': bcrypt.hash(self.__generate_password()),
+            'password': bcrypt.hash(generate_password()),
             'role_id': role.id
         }
         new_user: User = self.user_repo.store(user_data)
@@ -81,6 +83,3 @@ class RestaurantRegistrationService(BaseService, ABC):
             'phone': resource.restaurant_phone,
         }
         self.restaurant_repo.store(restaurant_data)
-
-    def __generate_password(self):
-        return 'password'

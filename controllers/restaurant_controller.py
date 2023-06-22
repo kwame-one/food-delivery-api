@@ -9,7 +9,7 @@ restaurant_bp = Blueprint('restaurant_bp', __name__)
 @restaurant_bp.post('/')
 def store(service: RestaurantService):
     data = RestaurantRequest(**request.get_json())
-    resource = service.store(data)
+    resource = service.store(data.dict())
     return jsonify(resource), 201
 
 

@@ -20,3 +20,6 @@ class Restaurant(Base):
 
     menus = relationship('Menu', back_populates='restaurant')
     user = relationship('User')
+
+    def __repr__(self):
+        return f"Restaurant(id={self.id}, name={self.name}, email={self.email}, address={self.address}, phone={self.phone})"
