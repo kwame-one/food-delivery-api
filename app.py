@@ -20,7 +20,7 @@ app.cli.add_command(seed_cli)
 
 register_handlers(app)
 
-register_routes(app)
+register_routes(app, 'v1')
 
 init_container(app)
 
