@@ -11,5 +11,9 @@ def resource_not_found_handler(e):
     return jsonify({'message': e.description}), 404
 
 
+def access_denied_handler(e):
+    return jsonify({'message': e.description}), 403
+
+
 def email_exists_handler(e):
     return jsonify({'message': 'Email has already taken'}), 400

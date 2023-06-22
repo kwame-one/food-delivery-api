@@ -6,6 +6,7 @@ from injector import inject
 from dtos.menu_dto import MenuDto
 from dtos.menu_extra_dto import MenuExtraDto
 from exceptions import ResourceNotFoundException
+from exceptions.access_denied_exception import AccessDeniedException
 from models import User, Menu, MenuExtra
 from repositories.menu_extra_repository import MenuExtraRepository
 from repositories.menu_repository import MenuRepository
@@ -73,8 +74,7 @@ class MenuService(BaseService, ABC):
             raise ResourceNotFoundException(description='Item not found')
 
         if menu.restaurant.id != user.restaurant.id:
-            # TODO: throw access denied to resource exception
-            pass
+            raise AccessDeniedException(description='Access denied to resource')
 
         updated_menu: Menu = self.repository.update(id, {
             'menu_category_id': data['menu_category_id'],
@@ -111,8 +111,7 @@ class MenuService(BaseService, ABC):
             raise ResourceNotFoundException(description='Item not found')
 
         if menu.restaurant.id != user.restaurant.id:
-            # TODO: throw access denied to resource exception
-            pass
+            raise AccessDeniedException(description='Access denied to resource')
 
         self.menu_extra_repo.delete_by_menu_id(menu.id)
         self.repository.delete(id)
