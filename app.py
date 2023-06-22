@@ -7,6 +7,7 @@ from configs.database import db_session, init_db
 from controllers import register_routes
 from di import init_container
 from exceptions import register_handlers
+from middlewares import register_middlewares
 
 app = Flask(__name__)
 app.config.from_object('configs.config')
@@ -18,6 +19,7 @@ init_db()
 app.wsgi_app = MiddlewareManager(app)
 app.cli.add_command(seed_cli)
 
+register_middlewares(app)
 register_handlers(app)
 
 register_routes(app, 'v1')

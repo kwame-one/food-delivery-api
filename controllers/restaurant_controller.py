@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import jwt_required
 
+from decorators import is_super_admin
 from requests.restaurant_request import RestaurantRequest
 from services.restaurant_service import RestaurantService
 
@@ -8,7 +9,8 @@ restaurant_bp = Blueprint('restaurant_bp', __name__)
 
 
 @restaurant_bp.post('')
-# @jwt_required()
+@jwt_required()
+@is_super_admin
 def store(service: RestaurantService):
     data = RestaurantRequest(**request.get_json())
     resource = service.store(data.dict())

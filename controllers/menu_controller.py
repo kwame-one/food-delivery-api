@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
+from decorators import is_restaurant_admin
 from requests.menu_request import MenuRequest
 from services.menu_service import MenuService
 
@@ -9,6 +10,7 @@ menu_bp = Blueprint('menu_bp', __name__)
 
 @menu_bp.post('')
 @jwt_required()
+@is_restaurant_admin
 def store(service: MenuService):
     data = MenuRequest(**request.get_json()).dict()
     data['user_id'] = get_jwt_identity()
@@ -18,6 +20,7 @@ def store(service: MenuService):
 
 @menu_bp.put('/<string:id>')
 @jwt_required()
+@is_restaurant_admin
 def update(id, service: MenuService):
     data = MenuRequest(**request.get_json()).dict()
     data['user_id'] = get_jwt_identity()
@@ -33,6 +36,7 @@ def index(service: MenuService):
 
 @menu_bp.get('/<string:id>')
 @jwt_required()
+@is_restaurant_admin
 def destroy(id, service: MenuService):
     service.delete_menu(id, get_jwt_identity())
     return jsonify({}), 204

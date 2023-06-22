@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import jwt_required
 
+from decorators import is_super_admin
 from requests.menu_category_request import MenuCategoryRequest
 from services.menu_category_service import MenuCategoryService
 
@@ -14,7 +15,8 @@ def index(service: MenuCategoryService):
 
 
 @menu_category_bp.post('')
-# @jwt_required()
+@jwt_required()
+@is_super_admin
 def store(service: MenuCategoryService):
     data = MenuCategoryRequest(**request.get_json())
     resource = service.store(data.dict())
@@ -22,7 +24,8 @@ def store(service: MenuCategoryService):
 
 
 @menu_category_bp.put('/<string:id>')
-# @jwt_required()
+@jwt_required()
+@is_super_admin
 def update(id, service: MenuCategoryService):
     data = MenuCategoryRequest(**request.get_json())
     resource = service.update(id, data.dict())
@@ -30,7 +33,8 @@ def update(id, service: MenuCategoryService):
 
 
 @menu_category_bp.delete('/<string:id>')
-# @jwt_required()
+@jwt_required()
+@is_super_admin
 def destroy(id, service: MenuCategoryService):
     service.delete(id)
     return jsonify({}), 204
