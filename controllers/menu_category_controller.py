@@ -7,13 +7,13 @@ from services.menu_category_service import MenuCategoryService
 menu_category_bp = Blueprint('menu_category_bp', __name__)
 
 
-@menu_category_bp.get('/')
+@menu_category_bp.get('')
 def index(service: MenuCategoryService):
     resources = service.find_all(query=request.args)
     return jsonify(resources)
 
 
-@menu_category_bp.post('/')
+@menu_category_bp.post('')
 # @jwt_required()
 def store(service: MenuCategoryService):
     data = MenuCategoryRequest(**request.get_json())

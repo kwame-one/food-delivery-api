@@ -13,7 +13,7 @@ class Menu(Base):
     name = Column(String(191), nullable=False)
     description = Column(Text(), nullable=False)
     price = Column(Double(), nullable=False)
-    image = Column(String(191), nullable=False)
+    image = Column(String(191), nullable=True)
 
     menu_category = relationship('MenuCategory', back_populates='menus')
     restaurant = relationship('Restaurant', back_populates='menus')

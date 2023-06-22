@@ -4,7 +4,6 @@ from injector import inject
 from passlib.hash import bcrypt
 
 from dtos.restaurant_dto import RestaurantDto
-from exceptions import EmailExistException
 from models import User, Restaurant, Role
 from repositories.restaurant_repository import RestaurantRepository
 from repositories.role_repository import RoleRepository
@@ -29,10 +28,6 @@ class RestaurantService(BaseService, ABC):
 
         del data['user_name']
         del data['user_email']
-
-        user: User = self.user_repo.find_by_email(user_email)
-        if user is not None:
-            raise EmailExistException()
 
         role: Role = self.role_repo.find_by_name('Restaurant Admin')
 

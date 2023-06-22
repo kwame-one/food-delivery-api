@@ -11,3 +11,5 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 
 JWT_SECRET_KEY = jwt_secret
+
+UPLOAD_FOLDER = basedir.join('public/images')

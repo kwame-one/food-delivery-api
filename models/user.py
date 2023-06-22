@@ -13,6 +13,7 @@ class User(Base):
     password = Column(String(191), nullable=False)
     role_id = Column(String(191), ForeignKey('roles.id'))
     role = relationship('Role', back_populates='users')
+    restaurant = relationship('Restaurant', back_populates='user', uselist=False)
 
     created_at = Column(DateTime, server_default=func.now(), nullable=True)
     updated_at = Column(DateTime, server_onupdate=func.now(), nullable=True)

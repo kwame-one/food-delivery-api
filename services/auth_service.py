@@ -23,10 +23,6 @@ class AuthService(BaseService, ABC):
         self.role_repository = role_repository
 
     def register(self, request: RegisterRequest):
-        user = self.repository.find_by_email(request.email)
-        if user is not None:
-            raise EmailExistException()
-
         data = request.dict()
         del data['password_confirmation']
 

@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column('name', String(191), nullable=False),
         sa.Column('description', Text(), nullable=False),
         sa.Column('price', Double(), nullable=False),
-        sa.Column('image', String(191), nullable=False),
+        sa.Column('image', String(191), nullable=True),
         sa.Column('created_at', sa.DateTime, server_default=func.now(), nullable=True),
         sa.Column('updated_at', sa.DateTime, server_onupdate=func.now(), nullable=True),
         sa.Column('deleted_at', sa.DateTime, nullable=True)

@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from configs import db_user, db_password, db_host, db_name
+from configs import db_user, db_password, db_host, db_name, db_port
 from models.base import Base
 
 
-engine = create_engine(f"mysql://{db_user}:{db_password}@{db_host}/{db_name}")
+engine = create_engine(f"mysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}")
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))

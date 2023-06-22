@@ -19,7 +19,7 @@ class Restaurant(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     menus = relationship('Menu', back_populates='restaurant')
-    user = relationship('User')
+    user = relationship('User', back_populates='restaurant')
 
     def __repr__(self):
         return f"Restaurant(id={self.id}, name={self.name}, email={self.email}, address={self.address}, phone={self.phone})"
