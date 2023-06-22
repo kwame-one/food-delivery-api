@@ -1,4 +1,5 @@
 from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required
 
 from requests.restaurant_registration_request import RestaurantRegistrationRequest, UpdateRestaurantRegistrationRequest
 from services.restaurant_registration_service import RestaurantRegistrationService
@@ -14,12 +15,14 @@ def store(service: RestaurantRegistrationService):
 
 
 @restaurant_registration_bp.get('/')
+@jwt_required()
 def index(service: RestaurantRegistrationService):
     resources = service.find_all(query=request.args)
     return jsonify(resources)
 
 
 @restaurant_registration_bp.put('/<string:id>')
+@jwt_required()
 def update(id, service: RestaurantRegistrationService):
     data = UpdateRestaurantRegistrationRequest(**request.get_json())
     resource = service.update(id, data.dict())
