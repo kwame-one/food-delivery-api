@@ -26,5 +26,5 @@ def index(service: OrderService):
 @order_bp.get('/<string:id>')
 @jwt_required()
 def find(id, service: OrderService):
-    resources = service.find(id)
+    resources = service.find_order(id, get_jwt_identity())
     return jsonify(resources)

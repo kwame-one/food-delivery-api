@@ -5,11 +5,15 @@ from abc import ABC
 from injector import inject
 
 from configs.database import db_session
+from dtos.menu_category_dto import MenuCategoryDto
+from dtos.order_detail_dto import OrderDetailDto
 from dtos.order_dto import OrderDto
+from dtos.order_item_dto import OrderItemDto
 from dtos.order_status_dto import OrderStatusDto
 from dtos.restaurant_dto import RestaurantDto
 from dtos.user_dto import UserDto
-from models import Order, UserOrder, OrderItem, Menu
+from exceptions import ResourceNotFoundException
+from models import Order, UserOrder, OrderItem
 from repositories.menu_extra_repository import MenuExtraRepository
 from repositories.menu_repository import MenuRepository
 from repositories.order_item_repository import OrderItemRepository
@@ -57,6 +61,48 @@ class OrderService(BaseService, ABC):
             user=UserDto.from_orm(item.user),
             created_at=item.created_at
         ).dict(), orders))
+
+    def find_order(self, id, user_id):
+        user = self.user_repo.find(user_id)
+        role_name = user.role.name
+
+        if role_name == 'Super Admin':
+            order = self.repository.find(id)
+        elif role_name == 'Restaurant Admin':
+            restaurant_id = user.restaurant.id
+            order = self.repository.find_by_restaurant_id_and_id(restaurant_id, id)
+        else:
+            order = self.repository.find_by_user_id_and_id(user_id, id)
+
+        if order is None:
+            raise ResourceNotFoundException(description='Order not found')
+
+        menu_ids = [item.menu_id for item in order.order_items]
+        menus = self.menu_repo.find_by_id_in(menu_ids)
+        menu_map = {menu.id: menu for menu in menus}
+        order_items = [OrderItemDto(
+            id=item.id,
+            quantity=item.quantity,
+            menu_price=item.menu_price,
+            menu_extras=json.loads(item.menu_extras),
+            menu={
+                'id': menu_map.get(item.menu_id).id,
+                'name': menu_map.get(item.menu_id).name,
+                'menu_category': MenuCategoryDto.from_orm(menu_map.get(item.menu_id).menu_category).dict()
+            },
+            created_at=item.created_at
+        ).dict() for item in order.order_items]
+
+        return OrderDetailDto(
+            id=order.id,
+            order_number=order.order_number,
+            total=order.total,
+            restaurant=RestaurantDto.from_orm(order.restaurant),
+            order_status=OrderStatusDto.from_orm(order.order_status),
+            user=UserDto.from_orm(order.user),
+            order_items=order_items,
+            created_at=order.created_at
+        ).dict()
 
     def store(self, data):
         cart = data['cart_items']
@@ -147,7 +193,8 @@ class OrderService(BaseService, ABC):
                 'menu_id': menu.id,
                 'quantity': quantity,
                 'menu_price': menu.price,
-                'menu_extras': json.dumps([{'id': extra.id, 'name': extra.name, 'price': extra.price} for extra in extras])
+                'menu_extras': json.dumps(
+                    [{'id': extra.id, 'name': extra.name, 'price': extra.price} for extra in extras])
             }
             order_item = OrderItem(**data)
             db_session.add(order_item)

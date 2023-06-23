@@ -26,4 +26,6 @@ class MenuRepository(BaseRepository):
         ).unique().all()
 
     def find_by_id_in(self, ids):
-        return db_session.scalars(select(self.model).where(self.model.id.in_(ids))).all()
+        return db_session.scalars(select(self.model)
+                                  .options(joinedload(self.model.menu_category))
+                                  .where(self.model.id.in_(ids))).all()
