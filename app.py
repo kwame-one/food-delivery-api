@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_http_middleware import MiddlewareManager
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 from commands.seed_command import seed_cli
 from configs.database import db_session, init_db
@@ -10,6 +11,7 @@ from exceptions import register_handlers
 from middlewares import register_middlewares
 
 app = Flask(__name__)
+CORS(app)
 app.config.from_object('configs.config')
 JWTManager(app)
 
