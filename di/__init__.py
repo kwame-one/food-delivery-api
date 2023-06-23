@@ -2,6 +2,7 @@ from flask_injector import FlaskInjector
 
 from .modules.menu_category_module import MenuCategoryModule
 from .modules.menu_module import MenuModule
+from .modules.order_module import OrderModule
 from .modules.restaurant_module import RestaurantModule
 from .modules.restaurant_registration_module import RestaurantRegistrationModule
 from .modules.role_module import RoleModule
@@ -16,4 +17,5 @@ def init_container(app):
         RestaurantRegistrationModule,
         MenuCategoryModule,
         MenuModule,
+        OrderModule
     ])
