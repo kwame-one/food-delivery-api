@@ -24,5 +24,5 @@ class CartItemRequest(BaseModel):
         menu_extra_repo = MenuExtraRepository()
         menu_extra = menu_extra_repo.find_by_menu_id_and_id(menu_id=values.get('menu_id', ''), id=v)
         if menu_extra is None:
-            raise ValueError('menu extra does not exists')
+            raise ValueError(f"menu extra does not for menu {values.get('menu_id', '')} exists")
         return v

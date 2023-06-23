@@ -10,7 +10,7 @@ def seed_super_admin():
     super_admin_role = role_repo.find_by_name('Super Admin')
     admin = {
         'name': 'The Super Administrator',
-        'email': 'super@admim.com',
+        'email': 'super@admin.com',
         'password': bcrypt.hash('password'),
         'role_id': super_admin_role.id,
     }
