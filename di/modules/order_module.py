@@ -7,6 +7,7 @@ from repositories.order_repository import OrderRepository
 from repositories.order_status_repository import OrderStatusRepository
 from repositories.user_repository import UserRepository
 from services.order_service import OrderService
+from services.order_status_service import OrderStatusService
 
 
 class OrderModule(Module):
@@ -20,6 +21,11 @@ class OrderModule(Module):
     @provider
     def provide_order_status_repository(self) -> OrderStatusRepository:
         return OrderStatusRepository()
+
+    @singleton
+    @provider
+    def provide_order_status_service(self, repository: OrderStatusRepository) -> OrderStatusService:
+        return OrderStatusService(repository=repository)
 
     @singleton
     @provider

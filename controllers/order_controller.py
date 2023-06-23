@@ -19,7 +19,7 @@ def store(service: OrderService):
 @order_bp.get('')
 @jwt_required()
 def index(service: OrderService):
-    resources = service.find_all(query=request.args)
+    resources = service.find_orders(user_id=get_jwt_identity(), query=request.args)
     return jsonify(resources)
 
 

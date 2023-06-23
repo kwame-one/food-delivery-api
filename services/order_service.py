@@ -5,6 +5,10 @@ from abc import ABC
 from injector import inject
 
 from configs.database import db_session
+from dtos.order_dto import OrderDto
+from dtos.order_status_dto import OrderStatusDto
+from dtos.restaurant_dto import RestaurantDto
+from dtos.user_dto import UserDto
 from models import Order, UserOrder, OrderItem, Menu
 from repositories.menu_extra_repository import MenuExtraRepository
 from repositories.menu_repository import MenuRepository
@@ -35,15 +39,24 @@ class OrderService(BaseService, ABC):
     def find_orders(self, user_id, query=None):
         user = self.user_repo.find(user_id)
         role_name = user.role.name
-        restaurant_id = user.restaurant.id
-        orders = []
+
         if role_name == 'Super Admin':
             orders = self.repository.find_all(query)
         elif role_name == 'Restaurant Admin':
+            restaurant_id = user.restaurant.id
             orders = self.repository.find_by_restaurant_id(restaurant_id)
         else:
             orders = self.repository.find_by_user_id(user_id)
-        return None
+
+        return list(map(lambda item: OrderDto(
+            id=item.id,
+            order_number=item.order_number,
+            total=item.total,
+            restaurant=RestaurantDto.from_orm(item.restaurant),
+            order_status=OrderStatusDto.from_orm(item.order_status),
+            user=UserDto.from_orm(item.user),
+            created_at=item.created_at
+        ).dict(), orders))
 
     def store(self, data):
         cart = data['cart_items']

@@ -15,8 +15,8 @@ def index(service: MenuCategoryService):
 
 
 @menu_category_bp.post('')
-# @jwt_required()
-# @is_super_admin
+@jwt_required()
+@is_super_admin
 def store(service: MenuCategoryService):
     data = MenuCategoryRequest(**request.get_json())
     resource = service.store(data.dict())
