@@ -66,7 +66,6 @@ flask run
 ---
 
 ### API Documentation
-1. Click [here](http://localhost:8000/api/documentation) to view the API documentation
 
 ---
 
