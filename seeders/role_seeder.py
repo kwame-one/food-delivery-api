@@ -20,5 +20,8 @@ def seed_roles():
     ]
     repo = RoleRepository()
     for role in roles:
-        repo.store(role)
+        exists = repo.find_by_name(role['name'])
+        if exists is None:
+            repo.store(role)
+
 
