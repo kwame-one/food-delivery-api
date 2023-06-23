@@ -1,8 +1,11 @@
+import uuid
 from abc import ABC
 from time import time
 
 from injector import inject
+from sqlalchemy import update, delete
 
+from configs.database import db_session
 from dtos.menu_dto import MenuDto
 from dtos.menu_extra_dto import MenuExtraDto
 from exceptions import ResourceNotFoundException
@@ -24,8 +27,16 @@ class MenuService(BaseService, ABC):
         self.menu_extra_repo = menu_extra_repo
         self.user_repo = user_repo
 
-    def find_all(self, query=None):
-        resources = self.repository.find_all(query)
+    def find_all_menus(self, user_id, query=None):
+        user = self.user_repo.find(user_id)
+        role_name = user.role.name
+        print(role_name)
+
+        if role_name == 'Restaurant Admin':
+            resources = self.repository.find_by_restaurant_id(user.restaurant.id)
+        else:
+            resources = self.repository.find_all(query)
+
         return list(map(lambda menu: MenuDto(
             id=menu.id,
             menu_category=menu.menu_category,
@@ -40,21 +51,26 @@ class MenuService(BaseService, ABC):
         user = self.user_repo.find(data['user_id'])
         menu_extras = data['menu_extras']
 
-        menu: Menu = self.repository.store({
-            'menu_category_id': data['menu_category_id'],
-            'restaurant_id': user.restaurant.id,
-            'name': data['name'],
-            'description': data['description'],
-            'price': data['price'],
-        })
+        menu = Menu(
+            id=str(uuid.uuid4()),
+            menu_category_id=data['menu_category_id'],
+            restaurant_id=user.restaurant.id,
+            name=data['name'],
+            description=data['description'],
+            price=data['price']
+        )
+        db_session.add(menu)
 
         stored_extras = []
 
         if menu_extras is not None and len(menu_extras) > 0:
             for extra in menu_extras:
                 extra['menu_id'] = menu.id
-                stored_extra = self.menu_extra_repo.store(extra)
+                extra['id'] = str(uuid.uuid4())
+                stored_extra = db_session.add(MenuExtra(**extra))
                 stored_extras.append(MenuExtraDto.from_orm(stored_extra))
+
+        db_session.commit()
 
         menu_dto: MenuDto = MenuDto(
             id=menu.id,
@@ -76,21 +92,26 @@ class MenuService(BaseService, ABC):
         if menu.restaurant.id != user.restaurant.id:
             raise AccessDeniedException(description='Access denied to resource')
 
-        updated_menu: Menu = self.repository.update(id, {
-            'menu_category_id': data['menu_category_id'],
-            'name': data['name'],
-            'description': data['description'],
-            'price': data['price'],
-        })
+        updated_menu: Menu = Menu(
+            menu_category_id=data['menu_category_id'],
+            name=data['name'],
+            description=data['description'],
+            price=data['price']
+        )
+        db_session.execute(update(Menu).where(Menu.id == id).values(updated_menu))
 
-        self.menu_extra_repo.delete_by_menu_id(menu.id)
+        db_session.execute(delete(MenuExtra).where(MenuExtra.menu_id == menu.id))
 
         stored_extras = []
 
         for extra in data['menu_extras']:
             extra['menu_id'] = updated_menu.id
-            stored_extra = self.menu_extra_repo.store(extra)
+            extra['id'] = str(uuid.uuid4())
+            stored_extra = MenuExtra(**extra)
+            db_session.add(stored_extra)
             stored_extras.append(MenuExtraDto.from_orm(stored_extra))
+
+        db_session.commit()
 
         menu_dto: MenuDto = MenuDto(
             id=menu.id,

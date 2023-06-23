@@ -29,8 +29,9 @@ def update(id, service: MenuService):
 
 
 @menu_bp.get('')
+@jwt_required()
 def index(service: MenuService):
-    resources = service.find_all(query=request.args)
+    resources = service.find_all_menus(user_id=get_jwt_identity(), query=request.args)
     return jsonify(resources)
 
 

@@ -11,6 +11,7 @@ from repositories.menu_repository import MenuRepository
 from repositories.order_item_repository import OrderItemRepository
 from repositories.order_repository import OrderRepository
 from repositories.order_status_repository import OrderStatusRepository
+from repositories.user_repository import UserRepository
 from services.base_service import BaseService
 from utils import generate_order_number
 
@@ -22,12 +23,27 @@ class OrderService(BaseService, ABC):
                  order_item_repo: OrderItemRepository,
                  menu_repo: MenuRepository,
                  menu_extra_repo: MenuExtraRepository,
-                 order_status_repo: OrderStatusRepository):
+                 order_status_repo: OrderStatusRepository,
+                 user_repo: UserRepository):
         super().__init__(repository)
         self.order_item_repo = order_item_repo
         self.menu_repo = menu_repo
         self.menu_extra_repo = menu_extra_repo
         self.order_status_repo = order_status_repo
+        self.user_repo = user_repo
+
+    def find_orders(self, user_id, query=None):
+        user = self.user_repo.find(user_id)
+        role_name = user.role.name
+        restaurant_id = user.restaurant.id
+        orders = []
+        if role_name == 'Super Admin':
+            orders = self.repository.find_all(query)
+        elif role_name == 'Restaurant Admin':
+            orders = self.repository.find_by_restaurant_id(restaurant_id)
+        else:
+            orders = self.repository.find_by_user_id(user_id)
+        return None
 
     def store(self, data):
         cart = data['cart_items']

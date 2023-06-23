@@ -14,3 +14,17 @@ def store(service: OrderService):
     data['user_id'] = get_jwt_identity()
     resource = service.store(data)
     return jsonify(resource), 201
+
+
+@order_bp.get('')
+@jwt_required()
+def index(service: OrderService):
+    resources = service.find_all(query=request.args)
+    return jsonify(resources)
+
+
+@order_bp.get('/<string:id>')
+@jwt_required()
+def find(id, service: OrderService):
+    resources = service.find(id)
+    return jsonify(resources)
