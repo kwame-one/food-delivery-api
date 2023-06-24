@@ -35,7 +35,7 @@ def index(service: MenuService):
     return jsonify(resources)
 
 
-@menu_bp.get('/<string:id>')
+@menu_bp.delete('/<string:id>')
 @jwt_required()
 @is_restaurant_admin
 def destroy(id, service: MenuService):

@@ -13,7 +13,9 @@ class MenuRepository(BaseRepository):
         super().__init__(model=Menu)
 
     def find_all(self, query=None):
-        db_query = select(self.model).order_by(desc(self.model.id)) \
+        db_query = select(self.model) \
+            .where(self.model.deleted_at == None)\
+            .order_by(desc(self.model.id)) \
             .options(joinedload(self.model.menu_category), joinedload(self.model.menu_extras))
 
         return self.__parse_query(db_query, query)
@@ -21,6 +23,7 @@ class MenuRepository(BaseRepository):
     def find_by_restaurant_id(self, restaurant_id, query=None):
         db_query = select(self.model) \
             .where(self.model.restaurant_id == restaurant_id) \
+            .where(self.model.deleted_at == None)\
             .options(joinedload(self.model.menu_category), joinedload(self.model.menu_extras)).order_by(
             desc(self.model.id))
 
@@ -29,6 +32,7 @@ class MenuRepository(BaseRepository):
     def find_by_id_in(self, ids):
         return db_session.scalars(select(self.model)
                                   .options(joinedload(self.model.menu_category))
+                                  .where(self.model.deleted_at == None)
                                   .where(self.model.id.in_(ids))).all()
 
     def __parse_query(self, db_query, query=None):

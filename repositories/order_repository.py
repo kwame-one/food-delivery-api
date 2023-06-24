@@ -13,6 +13,7 @@ class OrderRepository(BaseRepository):
 
     def find_all(self, query=None):
         db_query = select(self.model) \
+            .where(self.model.deleted_at == None)\
             .options(joinedload(self.model.user), joinedload(self.model.order_status),
                      joinedload(self.model.restaurant)) \
             .order_by(desc(self.model.id))
@@ -32,6 +33,7 @@ class OrderRepository(BaseRepository):
         db_query = select(self.model) \
             .options(joinedload(self.model.user), joinedload(self.model.order_status)) \
             .where(self.model.restaurant_id == restaurant_id) \
+            .where(self.model.deleted_at == None)\
             .order_by(desc(self.model.id))
 
         if query is not None:
@@ -46,6 +48,7 @@ class OrderRepository(BaseRepository):
     def find_by_user_id(self, user_id, query=None):
         db_query = select(self.model) \
             .options(joinedload(self.model.user), joinedload(self.model.order_status)) \
+            .where(self.model.deleted_at == None)\
             .where(self.model.user_id == user_id).order_by(desc(self.model.id)) \
             .order_by(desc(self.model.id))
 
@@ -64,6 +67,7 @@ class OrderRepository(BaseRepository):
                 .options(joinedload(self.model.user), joinedload(self.model.order_status),
                          joinedload(self.model.order_items))
                 .where(self.model.restaurant_id == restaurant_id)
+                .where(self.model.deleted_at == None)
                 .where(self.model.id == id)
         ).first()
 
@@ -73,6 +77,7 @@ class OrderRepository(BaseRepository):
                 .options(joinedload(self.model.user), joinedload(self.model.order_status),
                          joinedload(self.model.order_items))
                 .where(self.model.id == id)
+                .where(self.model.deleted_at == None)
                 .where(self.model.user_id == user_id)
         ).first()
 

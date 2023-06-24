@@ -10,4 +10,6 @@ class OrderStatusRepository(BaseRepository):
         super().__init__(model=OrderStatus)
 
     def find_by_name(self, name):
-        return db_session.scalars(select(self.model).where(self.model.name == name)).first()
+        return db_session.scalars(select(self.model)
+                                  .where(self.model.deleted_at == None)
+                                  .where(self.model.name == name)).first()

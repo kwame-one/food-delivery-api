@@ -67,7 +67,8 @@ class MenuService(BaseService, ABC):
             for extra in menu_extras:
                 extra['menu_id'] = menu.id
                 extra['id'] = str(uuid.uuid4())
-                stored_extra = db_session.add(MenuExtra(**extra))
+                stored_extra = MenuExtra(**extra)
+                db_session.add(stored_extra)
                 stored_extras.append(MenuExtraDto.from_orm(stored_extra))
 
         db_session.commit()
@@ -92,20 +93,22 @@ class MenuService(BaseService, ABC):
         if menu.restaurant.id != user.restaurant.id:
             raise AccessDeniedException(description='Access denied to resource')
 
-        updated_menu: Menu = Menu(
-            menu_category_id=data['menu_category_id'],
-            name=data['name'],
-            description=data['description'],
-            price=data['price']
-        )
-        db_session.execute(update(Menu).where(Menu.id == id).values(updated_menu))
+        updated_menu = {
+            'menu_category_id': data['menu_category_id'],
+            'name': data['name'],
+            'description': data['description'],
+            'price': data['price']
+        }
+        db_session.execute(update(Menu).where(Menu.id == id).values(**updated_menu))
 
         db_session.execute(delete(MenuExtra).where(MenuExtra.menu_id == menu.id))
+
+        updated_menu = self.repository.find(menu.id)
 
         stored_extras = []
 
         for extra in data['menu_extras']:
-            extra['menu_id'] = updated_menu.id
+            extra['menu_id'] = menu.id
             extra['id'] = str(uuid.uuid4())
             stored_extra = MenuExtra(**extra)
             db_session.add(stored_extra)

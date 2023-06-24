@@ -11,7 +11,7 @@ class RestaurantRegistrationRepository(BaseRepository):
         super().__init__(model=RestaurantRegistration)
 
     def find_all(self, query=None):
-        db_query = select(self.model).order_by(desc(self.model.id))
+        db_query = select(self.model).order_by(desc(self.model.id)).where(self.model.deleted_at == None)
         if query is None:
             return db_session.scalars(db_query).all()
 

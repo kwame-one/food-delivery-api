@@ -18,6 +18,7 @@ def is_super_admin(func):
 
         user_repo = UserRepository()
         user = user_repo.find(payload.get('sub'))
+        print(user)
         if user.role.name != 'Super Admin':
             return jsonify({'message': 'access denied'}), 403
         return func(*args, **kwargs)

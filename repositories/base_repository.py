@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from sqlalchemy import select, desc, update, delete
 
@@ -10,13 +11,19 @@ class BaseRepository:
         self.model = model
 
     def find_all(self, query=None):
-        return db_session.scalars(select(self.model).order_by(desc(self.model.id))).all()
+        return db_session.scalars(select(self.model)
+                                  .where(self.model.deleted_at == None)
+                                  .order_by(desc(self.model.id))).all()
 
     def find(self, id):
-        return db_session.scalars(select(self.model).where(self.model.id == id)).first()
+        return db_session.scalars(select(self.model)
+                                  .where(self.model.deleted_at == None)
+                                  .where(self.model.id == id)).first()
 
     def update(self, id, data):
-        db_session.execute(update(self.model).where(self.model.id == id).values(**data))
+        db_session.execute(update(self.model)
+                           .where(self.model.deleted_at == None)
+                           .where(self.model.id == id).values(**data))
         db_session.commit()
         return self.find(id)
 
@@ -28,5 +35,8 @@ class BaseRepository:
         return resource
 
     def delete(self, id):
-        db_session.execute(delete(self.model).where(self.model.id == id))
+        db_session.execute(update(self.model)
+                           .where(self.model.deleted_at == None)
+                           .where(self.model.id == id)
+                           .values(deleted_at=datetime.now()))
         db_session.commit()

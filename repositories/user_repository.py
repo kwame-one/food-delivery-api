@@ -10,4 +10,6 @@ class UserRepository(BaseRepository):
         super().__init__(model=User)
 
     def find_by_email(self, email):
-        return db_session.scalars(select(self.model).where(self.model.email == email)).first()
+        return db_session.scalars(select(self.model)
+                                  .where(self.model.deleted_at == None)
+                                  .where(self.model.email == email)).first()

@@ -10,7 +10,7 @@ from exceptions.order_update_exception import OrderUpdateException
 
 def register_handlers(app):
     app.register_error_handler(ResourceNotFoundException, resource_not_found_handler)
-    # app.register_error_handler(ValidationError, bad_request_handler)
+    app.register_error_handler(ValidationError, bad_request_handler)
     app.register_error_handler(EmailExistException, email_exists_handler)
     app.register_error_handler(AccessDeniedException, access_denied_handler)
     app.register_error_handler(OrderUpdateException, order_update_handler)

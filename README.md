@@ -66,6 +66,7 @@ flask run
 ---
 
 ### API Documentation
+1. Click [here](https://documenter.getpostman.com/view/18488208/2s93z6dj6V) to view the API documentation
 
 ---
 
