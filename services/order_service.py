@@ -48,9 +48,9 @@ class OrderService(BaseService, ABC):
             orders = self.repository.find_all(query)
         elif role_name == 'Restaurant Admin':
             restaurant_id = user.restaurant.id
-            orders = self.repository.find_by_restaurant_id(restaurant_id)
+            orders = self.repository.find_by_restaurant_id(restaurant_id, query)
         else:
-            orders = self.repository.find_by_user_id(user_id)
+            orders = self.repository.find_by_user_id(user_id, query)
 
         return list(map(lambda item: OrderDto(
             id=item.id,

@@ -18,12 +18,14 @@ def store(service: RestaurantService):
 
 
 @restaurant_bp.get('')
+@jwt_required()
 def index(service: RestaurantService):
     resources = service.find_all(query=request.args)
     return jsonify(resources)
 
 
 @restaurant_bp.get('/<string:id>')
+@jwt_required()
 def find(id, service: RestaurantService):
     resource = service.find(id)
     return jsonify(resource)

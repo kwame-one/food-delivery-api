@@ -44,7 +44,7 @@ class RestaurantRegistrationService(BaseService, ABC):
         user: User = self.user_repo.find_by_email(resource.user_email)
 
         if user is not None:
-            # TODO send email to user about informing them their email has also been recorded in the system
+            # TODO send email to user about informing them their email has already been recorded in the system
             raise EmailExistException()
 
         status = RestaurantRegistrationStatus.APPROVED.value if data['approve'] \

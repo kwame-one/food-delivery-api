@@ -19,6 +19,7 @@ def store(service: RestaurantRegistrationService):
 @jwt_required()
 @is_super_admin
 def index(service: RestaurantRegistrationService):
+    print(request.args)
     resources = service.find_all(query=request.args)
     return jsonify(resources)
 

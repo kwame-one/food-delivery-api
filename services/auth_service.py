@@ -32,7 +32,7 @@ class AuthService(BaseService, ABC):
         data['password'] = bcrypt.hash(request.password.encode())
         user = self.repository.store(data)
 
-        token = create_access_token(identity=user.id)
+        token = create_access_token(identity=user.id, expires_delta=False)
         return self.__get_auth(user, token)
 
     def login(self, request: LoginRequest):
@@ -41,7 +41,7 @@ class AuthService(BaseService, ABC):
             return None
         if not bcrypt.verify(request.password, user.password):
             return None
-        token = create_access_token(identity=user.id)
+        token = create_access_token(identity=user.id, expires_delta=False)
         return self.__get_auth(user, token)
 
     def get_dto(self):

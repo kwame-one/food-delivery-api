@@ -33,7 +33,7 @@ class MenuService(BaseService, ABC):
         print(role_name)
 
         if role_name == 'Restaurant Admin':
-            resources = self.repository.find_by_restaurant_id(user.restaurant.id)
+            resources = self.repository.find_by_restaurant_id(user.restaurant.id, query)
         else:
             resources = self.repository.find_all(query)
 
