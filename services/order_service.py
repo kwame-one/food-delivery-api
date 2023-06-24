@@ -13,6 +13,7 @@ from dtos.order_status_dto import OrderStatusDto
 from dtos.restaurant_dto import RestaurantDto
 from dtos.user_dto import UserDto
 from exceptions import ResourceNotFoundException
+from exceptions.order_update_exception import OrderUpdateException
 from models import Order, UserOrder, OrderItem
 from repositories.menu_extra_repository import MenuExtraRepository
 from repositories.menu_repository import MenuRepository
@@ -146,6 +147,28 @@ class OrderService(BaseService, ABC):
 
     def get_dto(self):
         pass
+
+    def update_order_status(self, id, data):
+        user = self.user_repo.find(data['user_id'])
+        restaurant = user.restaurant
+
+        order = self.repository.find_by_restaurant_id_and_id(restaurant.id, id)
+        if order is None:
+            raise ResourceNotFoundException(description='order not found')
+
+        if order.order_status.name != 'Pending':
+            raise OrderUpdateException(description='sorry you cannot update the status of this order')
+
+        updated_order = self.repository.update(id, {'order_status_id': data['order_status_id']})
+        return OrderDto(
+            id=updated_order.id,
+            order_number=updated_order.order_number,
+            total=updated_order.total,
+            restaurant=RestaurantDto.from_orm(order.restaurant),
+            order_status=OrderStatusDto.from_orm(updated_order.order_status),
+            user=UserDto.from_orm(updated_order.user),
+            created_at=updated_order.created_at
+        ).dict()
 
     def __caculate_total(self, menu_lists):
         total = 0
